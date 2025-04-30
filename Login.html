@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>QC Leave Login</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .login-box {
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 0 15px rgba(0,0,0,0.1);
+      width: 100%;
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .login-box img {
+      width: 150px;
+      margin-bottom: 20px;
+    }
+
+    .login-box input {
+      width: 80%;
+      padding: 12px;
+      font-size: 18px;
+      margin: 15px 0;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    .login-box button {
+      background: #0078d7;
+      color: white;
+      padding: 12px 24px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .login-box button:hover {
+      background: #005fa3;
+    }
+
+    .error {
+      color: red;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="login-box">
+    <img src="https://github.com/Duncan-Mortlock/Leave-Request-Form/blob/main/QC%20Logo%20Cropped.jpg?raw=true" />
+    <h2>Enter Your 4-Digit PIN</h2>
+    <input type="password" id="pinInput" maxlength="4" placeholder="e.g. 1234" />
+    <br>
+    <button onclick="submitPIN()">Login</button>
+    <div class="error" id="errorMsg"></div>
+  </div>
+
+  <script>
+    async function submitPIN() {
+      const pin = document.getElementById("pinInput").value.trim();
+      const error = document.getElementById("errorMsg");
+      error.textContent = "";
+
+      if (pin.length !== 4 || isNaN(pin)) {
+        error.textContent = "Please enter a valid 4-digit PIN.";
+        return;
+      }
+
+      try {
+        const response = await fetch("https://your-power-automate-endpoint-url", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ pin })
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          localStorage.setItem("qcUser", JSON.stringify(result));
+          window.location.href = "index.html"; // redirect to main form
+        } else {
+          error.textContent = "Invalid PIN. Please try again.";
+        }
+      } catch (err) {
+        error.textContent = "Unable to connect. Please try again later.";
+      }
+    }
+  </script>
+</body>
+</html>
